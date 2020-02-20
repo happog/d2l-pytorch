@@ -147,6 +147,7 @@ def train_ch5(net, train_iter, test_iter, criterion, num_epochs, batch_size, dev
     optimizer = optim.SGD(net.parameters(), lr=lr)
     for epoch in range(num_epochs):
         net.train() # Switch to training mode
+        num_iters = 0
         n, start = 0, time.time()
         train_l_sum = torch.tensor([0.0], dtype=torch.float32, device=device)
         train_acc_sum = torch.tensor([0.0], dtype=torch.float32, device=device)
@@ -162,6 +163,10 @@ def train_ch5(net, train_iter, test_iter, criterion, num_epochs, batch_size, dev
                 train_l_sum += loss.float()
                 train_acc_sum += (torch.sum((torch.argmax(y_hat, dim=1) == y))).float()
                 n += y.shape[0]
+            num_iters += 1
+            if num_iters % 2 == 0:
+                print('epoch %d, loss %.4f, time %.1f sec'\
+                    % (epoch + 1, loss.float(), time.time() - start))
 
         test_acc = evaluate_accuracy(test_iter, net, device) 
         print('epoch %d, loss %.4f, train acc %.3f, test acc %.3f, time %.1f sec'\
